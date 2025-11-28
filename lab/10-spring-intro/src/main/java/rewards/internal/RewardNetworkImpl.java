@@ -58,7 +58,7 @@ public class RewardNetworkImpl implements RewardNetwork {
 		//          the sequence diagram in the lab document
 		Account account = accountRepository.findByCreditCard(dining.getCreditCardNumber());
 		Restaurant restaurant = restaurantRepository.findByMerchantNumber(dining.getMerchantNumber());
-		MonetaryAmount amount = restaurant.calculatebenefitFor(account, dining);
+		MonetaryAmount amount = restaurant.calculateBenefitFor(account, dining);
 		AccountContribution contribution = account.makeContribution(amount);
 		accountRepository.updateBeneficiaries(account);
 		
