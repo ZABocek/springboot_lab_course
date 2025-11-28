@@ -3,7 +3,9 @@ package common.money;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,6 +18,7 @@ import java.math.RoundingMode;
 @Embeddable
 public class MonetaryAmount implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = -3734467432803577280L;
 
 	private BigDecimal value;

@@ -103,7 +103,7 @@ public class AccountWebClientTests {
     @Test
     public void createAccount_WebClient_blocking() throws Exception {
         // use a unique number to avoid conflicts
-        String number = String.format("12345%4d", random.nextInt(10000));
+        String number = "12345%4d".formatted(random.nextInt(10000));
         Account account = new Account(number, "John Doe");
         account.addBeneficiary("Jane Doe");
 
@@ -114,7 +114,7 @@ public class AccountWebClientTests {
                                                  .exchangeToMono(response -> Mono.just(response))
                                                  .block();
 
-        URI newAccountLocation = new URI(clientResponse.headers().header("Location").get(0));
+        URI newAccountLocation = new URI(clientResponse.headers().header("Location").getFirst());
 
         Account retrievedAccount = webClient.get()
                                             .uri(newAccountLocation)
@@ -160,7 +160,7 @@ public class AccountWebClientTests {
                                                  .exchangeToMono(response -> Mono.just(response))
                                                  .block();
 
-        URI newBeneficiaryLocation = new URI(clientResponse.headers().header("Location").get(0));
+        URI newBeneficiaryLocation = new URI(clientResponse.headers().header("Location").getFirst());
 
         Beneficiary newBeneficiary= webClient.get()
                                             .uri(newBeneficiaryLocation)

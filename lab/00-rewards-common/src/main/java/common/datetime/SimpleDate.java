@@ -1,5 +1,6 @@
 package common.datetime;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.text.SimpleDateFormat;
  */
 public class SimpleDate implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2285962420279644602L;
 
 	private GregorianCalendar base;

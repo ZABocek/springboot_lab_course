@@ -59,7 +59,7 @@ public class AccountControllerTests {
 		List<Account> accounts = controller.accountSummary();
 		assertNotNull(accounts);
 		assertEquals(1, accounts.size());
-		assertEquals(Long.valueOf(0), accounts.get(0).getEntityId());
+		assertEquals(Long.valueOf(0), accounts.getFirst().getEntityId());
 	}
 
 	@Test

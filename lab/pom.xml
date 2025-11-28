@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.spring.training.core-spring</groupId>
     <artifactId>parentProject</artifactId>
-    <version>5.3.23</version>
+    <version>5.3.24</version>
     <organization>
         <name>Spring Training</name>
         <url>https://spring.io/training</url>
@@ -11,16 +11,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>3.3.4</version>
     </parent>
     <properties>
         <!-- Versions of other dependencies not in spring IO. -->
         <easymock.version>4.3</easymock.version>
         <hibernate.jmx.version>3.5.6-Final</hibernate.jmx.version>
         <jamon.version>2.82</jamon.version>
-        <spring-security.version>5.8.0</spring-security.version>
+        <spring-security.version>6.1.5</spring-security.version>
 
-        <java.version>11</java.version>
+        <java.version>21</java.version>
 
         <!-- Enable maven support for Servlet 3 - no web.xml -->
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -58,6 +58,12 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+        </dependency>
+
+        <!-- Jakarta Persistence (Hibernate ORM includes the API) -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
         </dependency>
 
     </dependencies>
@@ -115,8 +121,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
             <plugin>

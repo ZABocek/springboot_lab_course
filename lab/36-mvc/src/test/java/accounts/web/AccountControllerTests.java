@@ -37,7 +37,7 @@ public class AccountControllerTests {
 		assertEquals(1, accounts.size());
 
 		// Validate that account
-		Account account = accounts.get(0);
+		Account account = accounts.getFirst();
 		assertEquals(expectedAccountId, (long) account.getEntityId());
 		assertEquals(expectedAccountNumber, account.getNumber());
 	}
