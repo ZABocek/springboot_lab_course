@@ -1,19 +1,30 @@
 package config;
 
 import org.assertj.core.api.Fail;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import rewards.RewardNetwork;
+import rewards.internal.RewardNetworkImpl;
+import rewards.internal.account.AccountRepository;
+import rewards.internal.account.JdbcAccountRepository;
+import rewards.internal.restaurant.RestaurantRepository;
+import rewards.internal.restaurant.JdbcRestaurantRepository;
+import rewards.internal.reward.RewardRepository;
+import rewards.internal.reward.JdbcRewardRepository;
 
 /**
  * Unit test the Spring configuration class to ensure it is creating the right
  * beans.
  */
 @SuppressWarnings("unused")
-public class RewardsConfigTests {
+class RewardsConfigTests {
 	// Provide a mock object for testing
 	private DataSource dataSource = Mockito.mock(DataSource.class);
 
@@ -23,11 +34,11 @@ public class RewardsConfigTests {
 	// - Fix RewardsConfig if necessary.
 	// - Now run the test, it should pass.
 
-	/*
+	
 	private RewardsConfig rewardsConfig = new RewardsConfig(dataSource);
 
 	@Test
-	public void getBeans() {
+	void getBeans() {
 		RewardNetwork rewardNetwork = rewardsConfig.rewardNetwork();
 		assertTrue(rewardNetwork instanceof RewardNetworkImpl);
 
@@ -43,7 +54,7 @@ public class RewardsConfigTests {
 		assertTrue(rewardsRepository instanceof JdbcRewardRepository);
 		checkDataSource(rewardsRepository);
 	}
-	*/
+	
 
 	/**
 	 * Ensure the data-source is set for the repository. Uses reflection as we do
@@ -56,9 +67,9 @@ public class RewardsConfigTests {
 		Class<? extends Object> repositoryClass = repository.getClass();
 
 		try {
-			Field dataSource = repositoryClass.getDeclaredField("dataSource");
-			dataSource.setAccessible(true);
-			assertNotNull(dataSource.get(repository));
+			Field dataSourceField = repositoryClass.getDeclaredField("dataSource");
+			dataSourceField.setAccessible(true);
+			assertNotNull(dataSourceField.get(repository));
 		} catch (Exception e) {
 			String failureMessage = "Unable to validate dataSource in " + repositoryClass.getSimpleName();
 			System.out.println(failureMessage);
