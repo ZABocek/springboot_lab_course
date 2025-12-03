@@ -41,9 +41,9 @@ public class JdbcRewardRepositoryTests {
 	@BeforeEach
 	public void setUp() {
 		dataSource = createTestDataSource();
+		assert dataSource != null;
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		repository = new JdbcRewardRepository(jdbcTemplate);
-		assert dataSource != null;
 	}
 
 	@Test
