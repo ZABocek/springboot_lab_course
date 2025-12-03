@@ -1,5 +1,6 @@
 package rewards.internal;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import rewards.AccountContribution;
@@ -17,19 +18,12 @@ import common.money.MonetaryAmount;
 /**
  * Rewards an Account for Dining at a Restaurant.
  * 
- * The sole Reward Network implementation. This object is an application-layer
- * service responsible for coordinating with the domain-layer to carry out
- * the process of rewarding benefits to accounts for dining.
+ * The sole Reward Network implementation. This object is an application-layer service responsible for coordinating with
+ * the domain-layer to carry out the process of rewarding benefits to accounts for dining.
  * 
  * Said in other words, this class implements the "reward account for dining" use case.
- *
- * TODO-00: In this lab, you are going to exercise the following:
- * - Enabling Spring Transaction
- * - Adding transactional behavior to a method
- * - Exercising transaction propagation
- * - Exercising transactional behavior in test
  */
-public class RewardNetworkImpl implements RewardNetwork {
+public class RewardNetworkImplRequiresNew implements RewardNetwork {
 
 	private AccountRepository accountRepository;
 
@@ -43,14 +37,14 @@ public class RewardNetworkImpl implements RewardNetwork {
 	 * @param restaurantRepository the repository for loading restaurants that determine how much to reward
 	 * @param rewardRepository the repository for recording a record of successful reward transactions
 	 */
-	public RewardNetworkImpl(AccountRepository accountRepository, RestaurantRepository restaurantRepository,
+	public RewardNetworkImplRequiresNew(AccountRepository accountRepository, RestaurantRepository restaurantRepository,
 			RewardRepository rewardRepository) {
 		this.accountRepository = accountRepository;
 		this.restaurantRepository = restaurantRepository;
 		this.rewardRepository = rewardRepository;
 	}
 
-	@Transactional
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public RewardConfirmation rewardAccountFor(Dining dining) {
 		Account account = accountRepository.findByCreditCard(dining.getCreditCardNumber());
 		Restaurant restaurant = restaurantRepository.findByMerchantNumber(dining.getMerchantNumber());

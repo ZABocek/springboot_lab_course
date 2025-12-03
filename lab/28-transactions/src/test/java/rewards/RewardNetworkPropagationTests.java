@@ -12,6 +12,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
 
+import org.springframework.lang.NonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * execution.
  */
 
-// TODO-05: Review and run the testPropagation() method below.
+// COMPLETED-05: Reviewed the testPropagation() method below.
 //
 //  It uses a transaction-manager to implement transactions manually
 //  and runs rewardAccountFor() within a transaction then performs a manual rollback.
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // - Think about why this test passes now.
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { SystemTestConfig.class })
+@ContextConfiguration(classes = { SystemTestRequiresNewConfig.class })
 public class RewardNetworkPropagationTests {
 
 	/**
@@ -51,11 +52,11 @@ public class RewardNetworkPropagationTests {
 	 */
 	@Autowired
 	private PlatformTransactionManager transactionManager;
-
 	@Autowired
-	public void initJdbcTemplate(DataSource dataSource) {
+	public void initJdbcTemplate(@NonNull DataSource dataSource) {
 		this.template = new JdbcTemplate(dataSource);
 	}
+	
 
 	@Test
 	public void testPropagation() {

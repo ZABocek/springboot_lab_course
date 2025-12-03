@@ -45,7 +45,9 @@ public class RewardNetworkTests {
 
 	@BeforeEach
 	public void setup() {
-		jdbcTemplate = new JdbcTemplate(dataSource);
+		if (dataSource != null) {
+			jdbcTemplate = new JdbcTemplate(dataSource);
+		}
 
 		// Using Logback for logging.
 		// Enable DEBUG logging so we can see the transactions
@@ -66,7 +68,7 @@ public class RewardNetworkTests {
 
 		// Check the DB to see if the Reward is actually on the table:
 		String sql = "SELECT COUNT(*) FROM T_REWARD WHERE CONFIRMATION_NUMBER = ? AND REWARD_AMOUNT = ?";
-		int count = jdbcTemplate.queryForObject(sql, Integer.class, confirmation.getConfirmationNumber(),
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, confirmation.getConfirmationNumber(),
 				confirmation.getAccountContribution().getAmount().asBigDecimal());
 
 		assertEquals(1, count);
