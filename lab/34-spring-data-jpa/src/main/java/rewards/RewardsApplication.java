@@ -40,12 +40,12 @@ public class RewardsApplication {
 
 		@Override
 		public void run(String... args) throws Exception {
-			long accountCount = this.jdbcTemplate.queryForObject(SQL, Long.class);
-			logger.info("Number of accounts:{}", accountCount);
+			Long accountCount = this.jdbcTemplate.queryForObject(SQL, Long.class);
+			if (accountCount != null) {
+				logger.info("Number of accounts:{}", accountCount);
+			}
 		}
 	}
 }
 
-// TODO-07: Configure JPA as specified in the TO-DO-07 in the
-//          src/test/resources/application.properties
-//          ("application.properties" file used for testing)
+// TODO-07: Configure JPA as specified in the TO-DO-07 in the src/test/resources/application.properties ("application.properties" file used for testing).

@@ -5,31 +5,40 @@ import common.money.Percentage;
 import rewards.Dining;
 import rewards.internal.account.Account;
 
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 /**
  * Restaurants calculate how much benefit may be awarded to an account for
  * dining based on a availability policy and a benefit percentage.
  */
-// TODO-05: Map this class using JPA Annotations.
-// - Use the following SQL statement in the schema.sql as a guidance.
-//
-// create table T_RESTAURANT (ID integer identity primary key,
-//                            MERCHANT_NUMBER varchar(10) not null,
-//                            NAME varchar(80) not null,
-//                            BENEFIT_PERCENTAGE decimal(5,2) not null,
-//                            BENEFIT_AVAILABILITY_POLICY varchar(1) not null, unique(MERCHANT_NUMBER));
+@Entity
+@Table(name = "T_RESTAURANT")
+@Access(AccessType.FIELD)
 public class Restaurant {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID")
 	private Long entityId;
 
+	@Column(name = "MERCHANT_NUMBER")
 	private String number;
 
+	@Column(name = "NAME")
 	private String name;
 
 	// This is not a simple mapping as Percentage is not a simple type.
 	// You need to map Percentage.value from a column in T_RESTAURANT.  If unsure,
 	// look at how Beneficiary does it.
+	@Column(name = "BENEFIT_PERCENTAGE")
 	private Percentage benefitPercentage;
 
 
@@ -139,26 +148,12 @@ public class Restaurant {
 
 	// Internal methods for JPA only - hence they are protected.
 	/**
-	 * Sets this restaurant's benefit availability policy from the code stored
-	 * in the underlying column. This is a database specific accessor using the
-	 * JPA 2 @Access annotation.
-	 */
-	protected void setDbBenefitAvailabilityPolicy(String policyCode) {
-		if ("A".equals(policyCode)) {
-			benefitAvailabilityPolicy = AlwaysAvailable.INSTANCE;
-		} else if ("N".equals(policyCode)) {
-			benefitAvailabilityPolicy = NeverAvailable.INSTANCE;
-		} else {
-			throw new IllegalArgumentException("Not a supported policy code "
-					+ policyCode);
-		}
-	}
-
-	/**
 	 * Returns this restaurant's benefit availability policy code for storage in
 	 * the underlying column. This is a database specific accessor using the JPA
 	 * 2 @Access annotation.
 	 */
+	@Column(name = "BENEFIT_AVAILABILITY_POLICY")
+	@Access(AccessType.PROPERTY)
 	protected String getDbBenefitAvailabilityPolicy() {
 		if (benefitAvailabilityPolicy == AlwaysAvailable.INSTANCE) {
 			return "A";
