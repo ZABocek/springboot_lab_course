@@ -2,8 +2,10 @@ package accounts.client;
 
 import common.money.Percentage;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import rewards.internal.account.Account;
 import rewards.internal.account.Beneficiary;
@@ -26,27 +28,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // TODO-01: Make this class a Spring Boot test class
 // - Add @SpringBootTest annotation with WebEnvironment.RANDOM_PORT
-
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// EXPLANATION: @SpringBootTest starts the entire Spring application context for integration testing.
+// WebEnvironment.RANDOM_PORT starts the embedded servlet container (Tomcat) on a random available port,
+// allowing true end-to-end testing of the REST endpoints.
 public class AccountClientTests {
 
 	// TODO-02: Autowire TestRestTemplate bean to a field
 	// - Name the field as restTemplate
+	@Autowired
+	private TestRestTemplate restTemplate;
+	// EXPLANATION: TestRestTemplate is a Spring Boot test utility that provides a convenient way to make
+	// HTTP requests to the running test server. Unlike RestTemplate, it handles relative URLs and provides
+	// better integration with test servers.
 
 	// TODO-03: Update code below to use TestRestTemplate (as opposed to RestTemplate)
 	// - Remove RestTemplate from this code
 	// - Remove BASE_URL from this code or change the value of it to ""
 	// - Run the tests and observe that they pass except
 	//   "addAndDeleteBeneficiary" test
-	//   (If you are using Gradle, remove test exclude statement
-	//    from the build.gradle before running these tests)
+	//   (If you are using Maven, the tests will run as configured in pom.xml)
 
 	/**
-	 * server URL ending with the servlet mapping on which the application can be
-	 * reached.
+	 * Base URL changed to empty string since TestRestTemplate uses relative URLs
+	 * to reach the running test server on its dynamically assigned port.
 	 */
-	private static final String BASE_URL = "http://localhost:8080";
+	private static final String BASE_URL = "";
+	// EXPLANATION: TestRestTemplate automatically resolves relative URLs against the running test server,
+	// so we don't need to specify the full URL with localhost:8080. The BASE_URL is now empty, and we'll
+	// use relative paths like "/accounts" instead of "http://localhost:8080/accounts".
 
-	private RestTemplate restTemplate = new RestTemplate();
 	private Random random = new Random();
 
 	@Test
@@ -108,11 +119,11 @@ public class AccountClientTests {
 
 		restTemplate.delete(newBeneficiaryLocation);
 
-		HttpClientErrorException httpClientErrorException = assertThrows(HttpClientErrorException.class, () -> {
-			System.out.println("You SHOULD get the exception \"No such beneficiary with name 'David'\" in the server.");
-			restTemplate.getForObject(newBeneficiaryLocation, Beneficiary.class);
-		});
-		assertThat(httpClientErrorException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		// EXPLANATION: Instead of using getForObject which throws an exception on 4xx/5xx responses,
+		// we use getForEntity which returns a ResponseEntity with the status code. This allows us to
+		// check the HTTP status code (404) without catching an exception, making the test more readable.
+		var response = restTemplate.getForEntity(newBeneficiaryLocation, Beneficiary.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
 	// TODO-05: Observe a log message in the console indicating
