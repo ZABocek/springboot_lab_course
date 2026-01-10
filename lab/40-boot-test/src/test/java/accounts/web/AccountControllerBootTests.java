@@ -39,6 +39,8 @@ public class AccountControllerBootTests {
 	// TODO-09: Create AccountManager mock bean using @MockBean annotation
 	@MockBean
 	private AccountManager accountManager;
+	
+	private ObjectMapper mapper = new ObjectMapper();
 	// EXPLANATION: @MockBean creates a Mockito mock of AccountManager and registers it in the Spring test context.
 	// Unlike @Mock (which requires MockitoAnnotations.openMocks(this)), @MockBean integrates the mock directly
 	// into the Spring application context, making it available for dependency injection into the controller.
@@ -117,6 +119,13 @@ public class AccountControllerBootTests {
 		// to the newly created resource.
 
 		verify(accountManager).save(any(Account.class));
+	}
+
+	/**
+	 * Helper method to convert an object to a JSON string.
+	 */
+	private String asJsonString(Object obj) {
+		try {
 			final String jsonContent = mapper.writeValueAsString(obj);
 			return jsonContent;
 		} catch (Exception e) {
