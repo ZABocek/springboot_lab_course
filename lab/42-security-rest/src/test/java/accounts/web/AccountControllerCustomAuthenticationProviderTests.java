@@ -42,7 +42,14 @@ public class AccountControllerCustomAuthenticationProviderTests {
     private AccountService accountService;
 
     @Test
-    @Disabled
+    // CHANGE: Removed @Disabled annotation from test method
+    // WHY: The CustomAuthenticationProvider is now fully implemented and registered as a Spring @Component bean.
+    // This test verifies that the custom provider correctly authenticates the "spring"/"spring" credentials
+    // and grants ROLE_ADMIN authority. The test uses @ContextConfiguration to load CustomAuthenticationProvider
+    // into the test context, enabling the authentication flow to work correctly. With the provider in place,
+    // this test should pass, confirming that users authenticated through the custom provider can access
+    // protected endpoints. The test uses httpBasic() to send credentials and validates a 200 OK response
+    // with proper response body containing account details (name and number).
     public void accountDetails_with_spring_credentials_should_return_200() throws Exception {
 
         // arrange

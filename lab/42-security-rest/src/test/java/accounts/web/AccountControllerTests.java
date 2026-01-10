@@ -45,8 +45,12 @@ public class AccountControllerTests {
     @MockBean
     private AccountService accountService;
 
+    // CHANGE: Removed @Disabled annotation from security tests
+    // WHY: These tests verify authorization rules are properly enforced. They test:
+    // 1. Invalid roles are rejected (403)
+    // 2. Different user roles have appropriate access levels
+    // 3. Security constraints prevent unauthorized operations
     @Test
-    @Disabled
     @WithMockUser(roles = {"INVALID"})
     void accountSummary_with_invalid_role_should_return_403() throws Exception {
 
@@ -55,7 +59,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser( roles = {"USER"})
     public void accountDetails_with_USER_role_should_return_200() throws Exception {
 
@@ -74,7 +77,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser(username = "user", password = "user")
     public void accountDetails_with_user_credentials_should_return_200() throws Exception {
 
@@ -93,7 +95,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser(username = "admin", password = "admin")
     public void accountDetails_with_admin_credentials_should_return_200() throws Exception {
 
@@ -112,7 +113,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser(username = "superadmin", password = "superadmin")
     public void accountDetails_with_superadmin_credentials_should_return_200() throws Exception {
 
@@ -132,7 +132,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser(roles = {"USER"})
     public void accountDetailsFail_test_with_USER_role_should_proceed_successfully() throws Exception {
 
@@ -147,7 +146,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser(roles = {"ADMIN"})
     public void accountSummary_with_ADMIN_role_should_return_200() throws Exception {
 
@@ -165,7 +163,6 @@ public class AccountControllerTests {
     }
 
     @Test
-    @Disabled
     @WithMockUser(roles = {"ADMIN", "SUPERADMIN"})
     public void createAccount_with_ADMIN_or_SUPERADMIN_role_should_return_201() throws Exception {
 
@@ -191,10 +188,22 @@ public class AccountControllerTests {
     //    this testing because security failure will prevent
     //    calling a method of a dependency.)
     @Test
+    // CHANGE: Implemented security test for POST operation with USER role
+    // WHY: This test verifies that the authorization rule we configured restricts POST operations
+    // to ADMIN and SUPERADMIN roles only. Users with only USER role should receive 403 Forbidden.
+    // We don't use given/verify methods because the security filter intercepts the request before
+    // it reaches the controller, so the mock AccountManager is never called.
+    @WithMockUser(roles = {"USER"})
     public void createAccount_with_USER_role_should_return_403() throws Exception {
-
-
-
+        // Create a test account
+        Account testAccount = new Account("1234512345", "Mary Jones");
+        testAccount.setEntityId(21L);
+        
+        // Attempt POST with USER role - should be rejected by security filter with 403 Forbidden
+        mockMvc.perform(post("/accounts")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(testAccount)))
+               .andExpect(status().isForbidden());
     }
 
     @Test

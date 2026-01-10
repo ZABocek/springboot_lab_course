@@ -31,6 +31,13 @@ import rewards.internal.account.Account;
 // - Remove @Disabled annotation from each test and run it
 // - Make sure all tests pass
 
+// CHANGE: Removed @Disabled annotation from CustomUserDetailsService tests
+// WHY: These tests verify that the @WithUserDetails annotation can load users from our
+// custom CustomUserDetailsService (mary and joe). Unlike @WithMockUser which creates mock users,
+// @WithUserDetails actually calls our UserDetailsService.loadUserByUsername() method,
+// demonstrating that our custom service is properly integrated and can authenticate real users.
+// These tests prove that mary/joe credentials work correctly with Spring Security.
+
 @WebMvcTest(AccountController.class)
 @ContextConfiguration(classes = {RestWsApplication.class, RestSecurityConfig.class, CustomUserDetailsService.class})
 public class AccountControllerCustomUserDetailsServiceTests {
@@ -45,7 +52,6 @@ public class AccountControllerCustomUserDetailsServiceTests {
     private AccountService accountService;
 
     @Test
-    @Disabled
     @WithUserDetails("joe")
     public void accountDetails_with_joe_credentials_should_return_200() throws Exception {
 
@@ -63,7 +69,6 @@ public class AccountControllerCustomUserDetailsServiceTests {
     }
 
     @Test
-    @Disabled
     @WithUserDetails("mary")
     public void accountDetails_with_mary_credentials_should_return_200() throws Exception {
 

@@ -23,6 +23,12 @@ import static org.assertj.core.api.Assertions.*;
 // - Remove @Disabled annotation from each test and run it
 // - Make sure all tests pass
 
+// CHANGE: Removed @Disabled annotation from integration security tests
+// WHY: These tests verify that our Spring Security configuration works correctly
+// against a running server using real HTTP requests with TestRestTemplate.
+// They test authentication (valid/invalid credentials), authorization (role-based access),
+// and HTTP status codes to ensure security rules are enforced end-to-end.
+
 @SpringBootTest(classes = {RestWsApplication.class},
         webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AccountClientTests {
@@ -33,7 +39,6 @@ public class AccountClientTests {
     private Random random = new Random();
 
     @Test
-    @Disabled
     public void listAccounts_using_invalid_user_should_return_401() throws Exception {
         ResponseEntity<String> responseEntity
                 = restTemplate.withBasicAuth("invalid", "invalid")
@@ -42,7 +47,6 @@ public class AccountClientTests {
     }
 
     @Test
-    @Disabled
     public void listAccounts_using_valid_user_should_succeed() {
         String url = "/accounts";
         // we have to use Account[] instead of List<Account>, or Jackson won't know what type to unmarshal to
@@ -58,7 +62,6 @@ public class AccountClientTests {
     }
 
     @Test
-    @Disabled
     public void listAccounts_using_valid_admin_should_succeed() {
         String url = "/accounts";
         // we have to use Account[] instead of List<Account>, or Jackson won't know what type to unmarshal to
@@ -74,7 +77,6 @@ public class AccountClientTests {
     }
 
     @Test
-    @Disabled
     public void getAccount_using_valid_user_should_succeed() {
         String url = "/accounts/{accountId}";
         ResponseEntity<Account> responseEntity
@@ -88,7 +90,6 @@ public class AccountClientTests {
     }
 
     @Test
-    @Disabled
     public void createAccount_using_admin_should_return_201() {
         String url = "/accounts";
         // use a unique number to avoid conflicts
@@ -105,10 +106,23 @@ public class AccountClientTests {
     //          is not permitted to create a new Account
     // - Use the code above as a guidance
     @Test
+    // CHANGE: Implemented integration test for POST operation with USER credentials
+    // WHY: This test verifies that the authorization rule restricts POST operations to ADMIN/SUPERADMIN
+    // roles only, using a real running server via TestRestTemplate. Unlike unit tests, this integration
+    // test validates the complete security chain: HTTP request -> Spring Security filter -> controller.
+    // The USER role should be denied with 403 Forbidden when attempting to create an account.
     public void createAccount_using_user_should_return_403() throws Exception {
-
-
-
+        String url = "/accounts";
+        // Use a unique number to avoid conflicts
+        String number = "12345%4d".formatted(random.nextInt(10000));
+        Account account = new Account(number, "John Doe");
+        account.addBeneficiary("Jane Doe");
+        
+        // Attempt POST with user credentials - should be rejected with 403 Forbidden
+        ResponseEntity<Void> responseEntity
+                = restTemplate.withBasicAuth("user", "user")
+                              .postForEntity(url, account, Void.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     @Test
