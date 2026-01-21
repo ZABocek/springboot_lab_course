@@ -52,6 +52,18 @@
             <scope>runtime</scope>
             <optional>true</optional>
           </dependency>
+
+          <!-- TODO-21: Add Spring Boot security starter to the pom.xml or build.gradle -->
+          <dependency>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-starter-security</artifactId>
+          </dependency>
+
+          <!-- TODO-26: Add AOP starter for AccountAspect -->
+          <dependency>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-starter-aop</artifactId>
+          </dependency>
     </dependencies>
 
     <build>
@@ -60,6 +72,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!-- TO-DO-06: Add build-info goal -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
