@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 // CHANGE: Added Import annotation support to load custom security configuration
 import org.springframework.context.annotation.Import;
 
+import config.RestSecurityConfig;
+
 // TODO-00: In this lab, you are going to exercise the following:
 // - Observing the default security behavior
 // - Configuring authorization based on roles
